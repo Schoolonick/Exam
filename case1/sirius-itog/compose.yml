@@ -1,0 +1,16 @@
+services:
+  loadbalancer:
+    image: nginx:latest
+    ports:
+      - 127.0.0.1:8080:80
+    volumes:
+      - ./config/nginx:/etc/nginx/templates
+      - ./frontend:/service/frontend
+  core-service:
+    build:
+      context: .
+      dockerfile: core.dockerfile
+  math-service:
+    build:
+      context: .
+      dockerfile: math.dockerfile

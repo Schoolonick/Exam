@@ -1,0 +1,46 @@
+upstream core-upstream {
+   server core-service:80;
+}
+
+upstream math-upstream {
+   server math-service:80;
+}
+
+map $http_x_rpc_method $route_me_pls {
+   hostnames;
+   math.* math-upstream;
+   default core-upstream;
+} 
+
+server {
+   listen 80;
+   root /service/frontend;
+
+   location /rpc {
+      client_max_body_size 4096;
+      proxy_read_timeout 1s;
+
+      if ($request_method != POST) {
+         return 405;
+      }
+
+      if ($http_x_client_id != 'sirius-frontend'){
+        return 401;
+      }
+
+      if ($http_x_client_secret = ''){
+        return 401;
+      }
+
+      if ($http_content_type != 'application/json') {
+        return 444;
+      }
+
+      proxy_pass http://$route_me_pls;
+   }
+
+   location / {
+      root /service/frontend;
+      index  index.html index.html;
+   }
+}
