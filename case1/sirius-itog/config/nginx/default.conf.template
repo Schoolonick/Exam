@@ -17,7 +17,7 @@ server {
    root /service/frontend;
 
    location /rpc {
-      client_max_body_size 4096;
+      client_max_body_size 64;
       proxy_read_timeout 1s;
 
       if ($request_method != POST) {
@@ -33,7 +33,7 @@ server {
       }
 
       if ($http_content_type != 'application/json') {
-        return 444;
+        return 400;
       }
 
       proxy_pass http://$route_me_pls;
