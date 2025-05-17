@@ -36,6 +36,10 @@ server {
         return 400;
       }
 
+      if ($http_x_rpc_method = "") {
+            return 400;
+      }
+
       proxy_pass http://$route_me_pls;
    }
 
